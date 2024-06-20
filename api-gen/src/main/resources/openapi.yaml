@@ -1,0 +1,647 @@
+openapi: 3.0.2
+info:
+  title: Bookstore API
+  description: API for managing bookstore
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Local server
+
+paths:
+
+# bookshop module
+  /books:
+    get:
+      tags:
+        - book-controller
+      operationId: listBooks
+      summary: Get all books
+      description: Retrieve a list of all books
+      parameters:
+        - name: title
+          in: query
+          description: Filter books by title
+          required: false
+          schema:
+            type: string
+            minLength: 1
+        - name: author
+          in: query
+          description: Filter books by author
+          required: false
+          schema:
+            type: string
+            minLength: 1
+        - name: genre
+          in: query
+          description: Filter books by genre
+          required: false
+          schema:
+            type: string
+            minLength: 1
+        - name: available
+          in: query
+          description: Filter books by availability
+          required: false
+          schema:
+            type: boolean
+        - name: price
+          in: query
+          description: Filter books by price
+          required: false
+          schema:
+            type: number
+      responses:
+        '200':
+          description: A list of books
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/InvalidRequestError'
+    post:
+      tags:
+        - book-controller
+      summary: Create a new book
+      description: Add a new book to the bookstore
+#      security:
+#        - BearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookCreateRequest'
+      responses:
+        '201':
+          description: Book created
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidRequestError'
+
+  /books/{id}:
+    get:
+      tags:
+        - book-controller
+      summary: Get a book by ID
+      description: Retrieve a single book by its ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: A single book
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceNotFoundError'
+    put:
+      tags:
+        - book-controller
+      summary: Update a book
+      description: Update an existing book by its ID
+#      security:
+#        - BearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookCreateRequest'
+      responses:
+        '204':
+          description: Book updated
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidRequestError'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceNotFoundError'
+    delete:
+      tags:
+        - book-controller
+      summary: Delete a book
+      description: Delete an existing book by its ID
+#      security:
+#        - BearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Book deleted
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceNotFoundError'
+
+  /books/{id}/purchase:
+    post:
+      summary: Purchase a book
+      description: Purchase an existing book by its ID
+      tags:
+        - book-controller
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookPurchaseRequest'
+      responses:
+        '200':
+          description: Book purchased
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookPurchaseResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceNotFoundError'
+
+  /authors:
+    get:
+      tags:
+        - author-controller
+      summary: Get all authors
+      description: Retrieve a list of all authors
+      responses:
+        '200':
+          description: A list of authors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuthorResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/InvalidRequestError'
+    post:
+      tags:
+        - author-controller
+      summary: Create a new author
+      description: Add a new author to the bookstore
+#      security:
+#        - BearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorCreateRequest'
+      responses:
+        '201':
+          description: Author created
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidRequestError'
+
+  /authors/{id}:
+    get:
+      tags:
+        - author-controller
+      summary: Get an author by ID
+      description: Retrieve a single author by its ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: A single author
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceNotFoundError'
+    put:
+      tags:
+        - author-controller
+      summary: Update an author
+      description: Update an existing author by its ID
+#      security:
+#        - BearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorCreateRequest'
+      responses:
+        '204':
+          description: Author updated
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidRequestError'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceNotFoundError'
+    delete:
+      tags:
+        - author-controller
+      summary: Delete an author
+      description: Delete an existing author by its ID
+#      security:
+#        - BearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Author deleted
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceNotFoundError'
+
+  /admin/order-report:
+    post:
+      tags:
+        - admin-controller
+      summary: Get order report
+      description: Generate a report of book orders (requires admin privileges)
+#      security:
+#        - BearerAuth: [ ]
+      responses:
+        '200':
+          description: Order report generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookResponse'
+        '403':
+          description: Resource forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceForbiddenError'
+
+# book-order module
+  /orders:
+    post:
+      tags:
+        - order-controller
+      summary: Create a new book order
+      description: Create a new order based on book visits
+#     security:
+#       - BearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookOrderRequest'
+      responses:
+        '201':
+          description: Order created
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidRequestError'
+
+  /orders/print:
+    get:
+      tags:
+        - order-controller
+      summary: Print book orders
+      description: Generate a PDF file of book orders
+      responses:
+        '200':
+          description: PDF file generated successfully
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '403':
+          description: Resource forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceForbiddenError'
+
+components:
+#  securitySchemes:
+#    BearerAuth:
+#      type: http
+#      scheme: bearer
+#      bearerFormat: JWT
+  schemas:
+    Book:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The ID of the book
+        authorId:
+          type: string
+          format: uuid
+          description: The ID of the author
+        author:
+          type: string
+          description: The name of the author
+        title:
+          type: string
+          description: The title of the book
+        genre:
+          type: string
+          description: The description of the book
+        price:
+          type: number
+          format: float
+          description: The price of the book
+        numberOfPages:
+          type: integer
+          format: int32
+          description: The number of pages in the book
+        websiteVisits:
+          type: integer
+          format: int32
+          description: The number of website visits for the book
+        availableCopies:
+          type: boolean
+          description: Available copies of the book
+    BookCreateRequest:
+      type: object
+      properties:
+        authorId:
+          type: string
+          format: uuid
+          description: The ID of the author
+        author:
+          type: string
+          description: The name of the author
+        title:
+          type: string
+          description: The title of the book
+        genre:
+          type: string
+          description: The description of the book
+        price:
+          type: number
+          format: float
+          description: The price of the book
+        numberOfPages:
+          type: integer
+          format: int32
+          description: The number of pages in the book
+        availableCopies:
+          type: boolean
+          description: Available copies of the book
+    BookResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The ID of the book
+        authorId:
+          type: string
+          format: uuid
+          description: The ID of the author
+        author:
+          type: string
+          description: The name of the author
+        title:
+          type: string
+          description: The title of the book
+        genre:
+          type: string
+          description: The description of the book
+        price:
+          type: number
+          format: float
+          description: The price of the book
+        numberOfPages:
+          type: integer
+          format: int32
+          description: The number of pages in the book
+    BookPurchaseRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The ID of the book
+        authorId:
+          type: string
+          format: uuid
+          description: The ID of the author
+        author:
+          type: string
+          description: The name of the author
+        title:
+          type: string
+          description: The title of the book
+        genre:
+          type: string
+          description: The description of the book
+        price:
+          type: number
+          format: float
+          description: The price of the book
+        numberOfPages:
+          type: integer
+          format: int32
+          description: The number of pages in the book
+    BookPurchaseResponse:
+      type: object
+      properties:
+        author:
+          type: string
+          description: The name of the author
+        title:
+          type: string
+          description: The title of the book
+        genre:
+          type: string
+          description: The description of the book
+        price:
+          type: number
+          format: float
+          description: The price of the book
+        numberOfPages:
+          type: integer
+          format: int32
+          description: The number of pages in the book
+    BookOrderRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The ID of the book
+        title:
+          type: string
+          description: The title of the book
+        pageVisits:
+          type: integer
+          format: int32
+          description: The number of website visits for the book
+    BookOrderDatabaseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The ID of the book
+        amountToOrder:
+          type: integer
+          format: int32
+          description: The amount of books to order
+    Author:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The ID of the author
+        name:
+          type: string
+          description: The name of the author
+        authoredBooks:
+          type: array
+          items:
+            $ref: '#/components/schemas/BookResponse'
+    AuthorCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the author
+    AuthorResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The ID of the author
+        name:
+          type: string
+          description: The name of the author
+    InvalidRequestError:
+      type: object
+      description: Error indicating an invalid request
+      required:
+        - message
+        - details
+      properties:
+        message:
+          type: string
+          description: The error message
+        details:
+          type: string
+          description: The error details
+    ResourceNotFoundError:
+      type: object
+      description: Error indicating a resource was not found
+      required:
+        - message
+        - details
+      properties:
+        message:
+          type: string
+          description: The error message
+        details:
+          type: string
+          description: The error details
+    ResourceForbiddenError:
+      type: object
+      description: Error indicating a resource was forbidden
+      required:
+        - message
+        - details
+      properties:
+        message:
+          type: string
+          description: The error message
+        details:
+          type: string
+          description: The error details
