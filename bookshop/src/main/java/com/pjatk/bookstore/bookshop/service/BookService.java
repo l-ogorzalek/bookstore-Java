@@ -7,8 +7,9 @@ import com.pjatk.bookstore.bookshop.dto.BookResponse;
 import com.pjatk.bookstore.bookshop.exception.InvalidRequestError;
 import com.pjatk.bookstore.bookshop.exception.ResourceNotFoundError;
 import com.pjatk.bookstore.bookshop.mapper.BookMapper;
+import com.pjatk.bookstore.bookshop.model.Author;
 import com.pjatk.bookstore.bookshop.model.Book;
-// import com.pjatk.bookstore.bookshop.repository.AuthorRepository;
+import com.pjatk.bookstore.bookshop.repository.AuthorRepository;
 import com.pjatk.bookstore.bookshop.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ import static java.util.stream.Collectors.toList;
 public class BookService {
 
     private final BookRepository bookRepository;
-    // private final AuthorRepository authorRepository;
+    private final AuthorRepository authorRepository;
     private final BookMapper bookMapper = BookMapper.INSTANCE;
 
     public List<BookResponse> listBooks(String title, String author, String genre, Integer available, BigDecimal price) {
@@ -35,7 +36,7 @@ public class BookService {
         List<Book> filteredBooks = bookRepository.findAll()
                 .stream()
                 .filter(book -> title == null || book.getTitle().contains(title))
-                .filter(book -> author == null || book.getAuthor().contains(author))
+                .filter(book -> author == null || book.getAuthor().getName().contains(author))
                 .filter(book -> genre == null || book.getGenre().contains(genre))
                 .filter(book -> available == null || Objects.equals(book.getAvailableCopies(), available))
                 .filter(book -> price == null || book.getPrice().compareTo(price) <= 0)
@@ -119,11 +120,12 @@ public class BookService {
 
             return bookMapper.toBookPurchaseResponse(book);
         } else {
-            throw new ResourceNotFoundError("Resource not found", "BOok with id " + id + " was not found", id.toString());
+            throw new ResourceNotFoundError("Resource not found", "Book with id " + id + " was not found", id.toString());
         }
     }
 
     //validators
+
     private void validateBookCreateRequest(BookCreateRequest bookCreateRequest) {
         if (bookCreateRequest.getTitle() == null || bookCreateRequest.getAuthor() == null || bookCreateRequest.getGenre() == null ||
                 bookCreateRequest.getAvailableCopies() == null || bookCreateRequest.getPrice() == null) {
@@ -166,7 +168,14 @@ public class BookService {
 
     private void bookFieldsSetter(Book book, BookCreateRequest bookCreateRequest) {
         book.setTitle(bookCreateRequest.getTitle());
-        book.setAuthor(bookCreateRequest.getAuthor());
+
+        UUID authorId = bookCreateRequest.getAuthorId();
+
+        Author author = authorRepository.findById(authorId)
+                .orElseThrow(() -> new InvalidRequestError("Invalid request", "Author was not found"));
+
+
+        book.setAuthor(author);
         book.setGenre(bookCreateRequest.getGenre());
         book.setAvailableCopies(bookCreateRequest.getAvailableCopies());
         book.setPrice(bookCreateRequest.getPrice());
