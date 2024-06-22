@@ -44,7 +44,7 @@ public class BookController implements BookControllerApi {
     }
 
     @GetMapping("/listBooks/{id}")
-    public ResponseEntity<BookResponse> GetBookId(@PathVariable("id") UUID id) {
+    public ResponseEntity<BookResponse> getBookById(@PathVariable("id") UUID id) {
         BookResponse bookResponse = service.getBookById(id);
         return ResponseEntity.ok(bookResponse);
     }

@@ -5,16 +5,16 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class InvalidRequestError extends RuntimeException {
+public class InvalidRequestException extends RuntimeException {
 
     private String message;
     private String details;
 
-    public InvalidRequestError() {
+    public InvalidRequestException() {
         super();
     }
 
-    public InvalidRequestError(String message, String details) {
+    public InvalidRequestException(String message, String details) {
         this.message = message;
         this.details = details;
     }

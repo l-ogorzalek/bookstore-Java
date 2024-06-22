@@ -3,7 +3,7 @@ package com.pjatk.bookstore.bookorder.service;
 import com.pjatk.bookstore.bookorder.dto.BookOrderRequest;
 import com.pjatk.bookstore.bookorder.model.BookOrder;
 import com.pjatk.bookstore.bookorder.repository.OrderRepository;
-import com.pjatk.bookstore.bookshop.exception.InvalidRequestError;
+import com.pjatk.bookstore.bookshop.exception.InvalidRequestException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -61,10 +61,10 @@ public class OrderService {
     private void validateBookOrderRequests(List<BookOrderRequest> bookOrderRequests) {
         for (BookOrderRequest request : bookOrderRequests) {
             if (request.getBookId() == null) {
-                throw new InvalidRequestError("Invalid request", "Book ID cannot be null");
+                throw new InvalidRequestException("Invalid request", "Book ID cannot be null");
             }
             if (request.getWebsiteVisits() == null || request.getWebsiteVisits() < 0) {
-                throw new InvalidRequestError("Invalid request", "Website visits cannot be negative");
+                throw new InvalidRequestException("Invalid request", "Website visits cannot be negative");
             }
         }
     }
@@ -72,10 +72,10 @@ public class OrderService {
     private void validateBookOrders(List<BookOrder> bookOrders) {
         for (BookOrder order : bookOrders) {
             if (order.getBookId() == null) {
-                throw new InvalidRequestError("Invalid request", "Book ID cannot be null");
+                throw new InvalidRequestException("Invalid request", "Book ID cannot be null");
             }
             if (order.getOrderAmount() == null || order.getOrderAmount() < 0) {
-                throw new InvalidRequestError("Invalid request", "Order amount cannot be negative");
+                throw new InvalidRequestException("Invalid request", "Order amount cannot be negative");
             }
         }
     }

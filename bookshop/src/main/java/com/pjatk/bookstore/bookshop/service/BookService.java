@@ -4,8 +4,8 @@ import com.pjatk.bookstore.bookshop.dto.BookCreateRequest;
 import com.pjatk.bookstore.bookshop.dto.BookPurchaseRequest;
 import com.pjatk.bookstore.bookshop.dto.BookPurchaseResponse;
 import com.pjatk.bookstore.bookshop.dto.BookResponse;
-import com.pjatk.bookstore.bookshop.exception.InvalidRequestError;
-import com.pjatk.bookstore.bookshop.exception.ResourceNotFoundError;
+import com.pjatk.bookstore.bookshop.exception.InvalidRequestException;
+import com.pjatk.bookstore.bookshop.exception.ResourceNotFoundException;
 import com.pjatk.bookstore.bookshop.mapper.BookMapper;
 import com.pjatk.bookstore.bookshop.model.Author;
 import com.pjatk.bookstore.bookshop.model.Book;
@@ -43,7 +43,7 @@ public class BookService {
                 .toList();
 
         if (filteredBooks.isEmpty()) {
-            throw new InvalidRequestError("Invalid request", "No books were found matching the criteria");
+            throw new InvalidRequestException("Invalid request", "No books were found matching the criteria");
         }
 
         return filteredBooks.stream()
@@ -72,7 +72,7 @@ public class BookService {
             updateBookWebsiteVisits(book);
             return bookMapper.toBookResponse(book);
         } else {
-            throw new ResourceNotFoundError("Resource not found", "Book with id " + id + " was not found", id.toString());
+            throw new ResourceNotFoundException("Resource not found", "Book with id " + id + " was not found", id.toString());
         }
     }
 
@@ -89,7 +89,7 @@ public class BookService {
 
             return bookMapper.toBookResponse(updatedBook);
         } else {
-            throw new ResourceNotFoundError("Resource not found", "Book with id " + id + " was not found", id.toString());
+            throw new ResourceNotFoundException("Resource not found", "Book with id " + id + " was not found", id.toString());
         }
     }
 
@@ -102,7 +102,7 @@ public class BookService {
             Book bookToDelete = bookOptional.get();
             bookRepository.delete(bookToDelete);
         } else {
-            throw new ResourceNotFoundError("Resource not found", "Book with id " + id + " was not found", id.toString());
+            throw new ResourceNotFoundException("Resource not found", "Book with id " + id + " was not found", id.toString());
         }
     }
 
@@ -120,7 +120,7 @@ public class BookService {
 
             return bookMapper.toBookPurchaseResponse(book);
         } else {
-            throw new ResourceNotFoundError("Resource not found", "Book with id " + id + " was not found", id.toString());
+            throw new ResourceNotFoundException("Resource not found", "Book with id " + id + " was not found", id.toString());
         }
     }
 
@@ -129,7 +129,7 @@ public class BookService {
     private void validateBookCreateRequest(BookCreateRequest bookCreateRequest) {
         if (bookCreateRequest.getTitle() == null || bookCreateRequest.getAuthor() == null || bookCreateRequest.getGenre() == null ||
                 bookCreateRequest.getAvailableCopies() == null || bookCreateRequest.getPrice() == null) {
-            throw new InvalidRequestError("Invalid request", "All fields (title, author, genre, availableCopies, price) are required.");
+            throw new InvalidRequestException("Invalid request", "All fields (title, author, genre, availableCopies, price) are required.");
         }
     }
 
@@ -137,7 +137,7 @@ public class BookService {
         validateId(bookPurchaseRequest.getId());
         if (bookPurchaseRequest.getAuthor() == null || bookPurchaseRequest.getTitle() == null || bookPurchaseRequest.getGenre() == null ||
                 bookPurchaseRequest.getPrice() == null || bookPurchaseRequest.getNumberOfPages() == null) {
-            throw new InvalidRequestError("Invalid request", "All fields (title, author, genre, availableCopies, price) are required.");
+            throw new InvalidRequestException("Invalid request", "All fields (title, author, genre, availableCopies, price) are required.");
         }
     }
 
@@ -149,13 +149,13 @@ public class BookService {
 
     private void checkAvailableCopies(Integer availableCopies) {
         if (availableCopies == 0) {
-            throw new InvalidRequestError("Invalid request", "Book is out of stock");
+            throw new InvalidRequestException("Invalid request", "Book is out of stock");
         }
     }
 
     private void validateFilters(BigDecimal price) {
         if (price != null && price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new InvalidRequestError("Invalid request", "Price cannot be negative");
+            throw new InvalidRequestException("Invalid request", "Price cannot be negative");
         }
     }
 
@@ -172,7 +172,7 @@ public class BookService {
         UUID authorId = bookCreateRequest.getAuthorId();
 
         Author author = authorRepository.findById(authorId)
-                .orElseThrow(() -> new InvalidRequestError("Invalid request", "Author was not found"));
+                .orElseThrow(() -> new InvalidRequestException("Invalid request", "Author was not found"));
 
 
         book.setAuthor(author);

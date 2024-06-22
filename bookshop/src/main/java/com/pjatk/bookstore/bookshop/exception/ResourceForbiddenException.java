@@ -5,17 +5,17 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ResourceForbiddenError extends RuntimeException {
+public class ResourceForbiddenException extends RuntimeException {
 
     private String message;
     private String details;
     private String resourceType;
 
-    public ResourceForbiddenError() {
+    public ResourceForbiddenException() {
         super();
     }
 
-    public ResourceForbiddenError(String message, String details, String resourceType) {
+    public ResourceForbiddenException(String message, String details, String resourceType) {
         this.message = message;
         this.details = details;
         this.resourceType = resourceType;

@@ -14,7 +14,7 @@ paths:
     get:
       tags:
         - book-controller
-      operationId: listBooks
+      operationId: listAndFilterBooks
       summary: Get all books
       description: Retrieve a list of all books
       parameters:
@@ -66,14 +66,15 @@ paths:
             application/json:
               schema:
                 items:
-                  $ref: '#/components/schemas/InvalidRequestError'
+                  $ref: '#/components/schemas/InvalidRequestException'
     post:
       tags:
         - book-controller
+      operationId: postBook
       summary: Create a new book
       description: Add a new book to the bookstore
-#      security:
-#        - BearerAuth: [ ]
+      security:
+        - BearerAuth: [ ]
       requestBody:
         required: true
         content:
@@ -88,12 +89,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InvalidRequestError'
+                $ref: '#/components/schemas/InvalidRequestException'
 
   /books/{id}:
     get:
       tags:
         - book-controller
+      operationId: getBookId
       summary: Get a book by ID
       description: Retrieve a single book by its ID
       parameters:
@@ -115,14 +117,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResourceNotFoundError'
+                $ref: '#/components/schemas/ResourceNotFoundException'
     put:
       tags:
         - book-controller
+      operationId: updateBook
       summary: Update a book
       description: Update an existing book by its ID
-#      security:
-#        - BearerAuth: [ ]
+      security:
+        - BearerAuth: [ ]
       parameters:
         - name: id
           in: path
@@ -144,20 +147,21 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InvalidRequestError'
+                $ref: '#/components/schemas/InvalidRequestException'
         '404':
           description: Resource not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResourceNotFoundError'
+                $ref: '#/components/schemas/ResourceNotFoundException'
     delete:
       tags:
         - book-controller
+      operationId: deleteBook
       summary: Delete a book
       description: Delete an existing book by its ID
-#      security:
-#        - BearerAuth: [ ]
+      security:
+        - BearerAuth: [ ]
       parameters:
         - name: id
           in: path
@@ -173,7 +177,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResourceNotFoundError'
+                $ref: '#/components/schemas/ResourceNotFoundException'
 
   /books/{id}/purchase:
     post:
@@ -181,6 +185,7 @@ paths:
       description: Purchase an existing book by its ID
       tags:
         - book-controller
+      operationId: purchaseBook
       parameters:
         - name: id
           in: path
@@ -206,12 +211,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResourceNotFoundError'
+                $ref: '#/components/schemas/ResourceNotFoundException'
 
   /authors:
     get:
       tags:
         - author-controller
+      operationId: getAuthorsList
       summary: Get all authors
       description: Retrieve a list of all authors
       responses:
@@ -229,14 +235,15 @@ paths:
             application/json:
               schema:
                 items:
-                  $ref: '#/components/schemas/InvalidRequestError'
+                  $ref: '#/components/schemas/InvalidRequestException'
     post:
       tags:
         - author-controller
+      operationId: postAuthor
       summary: Create a new author
       description: Add a new author to the bookstore
-#      security:
-#        - BearerAuth: [ ]
+      security:
+        - BearerAuth: [ ]
       requestBody:
         required: true
         content:
@@ -251,12 +258,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InvalidRequestError'
+                $ref: '#/components/schemas/InvalidRequestException'
 
   /authors/{id}:
     get:
       tags:
         - author-controller
+      operationId: getAuthorId
       summary: Get an author by ID
       description: Retrieve a single author by its ID
       parameters:
@@ -278,14 +286,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResourceNotFoundError'
+                $ref: '#/components/schemas/ResourceNotFoundException'
     put:
       tags:
         - author-controller
+      operationId: updateAuthor
       summary: Update an author
       description: Update an existing author by its ID
-#      security:
-#        - BearerAuth: [ ]
+      security:
+        - BearerAuth: [ ]
       parameters:
         - name: id
           in: path
@@ -307,20 +316,21 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InvalidRequestError'
+                $ref: '#/components/schemas/InvalidRequestException'
         '404':
           description: Resource not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResourceNotFoundError'
+                $ref: '#/components/schemas/ResourceNotFoundException'
     delete:
       tags:
         - author-controller
+      operationId: deleteAuthor
       summary: Delete an author
       description: Delete an existing author by its ID
-#      security:
-#        - BearerAuth: [ ]
+      security:
+        - BearerAuth: [ ]
       parameters:
         - name: id
           in: path
@@ -336,16 +346,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResourceNotFoundError'
+                $ref: '#/components/schemas/ResourceNotFoundException'
 
   /admin/order-report:
     post:
       tags:
         - admin-controller
+      operationId: generateOrderReport
       summary: Get order report
       description: Generate a report of book orders (requires admin privileges)
-#      security:
-#        - BearerAuth: [ ]
+      security:
+        - BearerAuth: [ ]
       responses:
         '200':
           description: Order report generated successfully
@@ -358,17 +369,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResourceForbiddenError'
+                $ref: '#/components/schemas/ResourceForbiddenException'
 
 # book-order module
-  /orders:
+  /orders/createOrder:
     post:
       tags:
         - order-controller
+      operationId: createOrder
       summary: Create a new book order
       description: Create a new order based on book visits
-#     security:
-#       - BearerAuth: [ ]
       requestBody:
         required: true
         content:
@@ -383,12 +393,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InvalidRequestError'
+                $ref: '#/components/schemas/InvalidRequestException'
 
   /orders/print:
     get:
       tags:
         - order-controller
+      operationId: printOrder
       summary: Print book orders
       description: Generate a PDF file of book orders
       responses:
@@ -404,14 +415,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResourceForbiddenError'
+                $ref: '#/components/schemas/ResourceForbiddenException'
 
 components:
-#  securitySchemes:
-#    BearerAuth:
-#      type: http
-#      scheme: bearer
-#      bearerFormat: JWT
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     Book:
       type: object
@@ -420,13 +431,8 @@ components:
           type: string
           format: uuid
           description: The ID of the book
-        authorId:
-          type: string
-          format: uuid
-          description: The ID of the author
         author:
-          type: string
-          description: The name of the author
+          $ref: '#/components/schemas/Book'
         title:
           type: string
           description: The title of the book
@@ -446,7 +452,8 @@ components:
           format: int32
           description: The number of website visits for the book
         availableCopies:
-          type: boolean
+          type: integer
+          format: int32
           description: Available copies of the book
     BookCreateRequest:
       type: object
@@ -473,19 +480,12 @@ components:
           format: int32
           description: The number of pages in the book
         availableCopies:
-          type: boolean
+          type: integer
+          format: int32
           description: Available copies of the book
     BookResponse:
       type: object
       properties:
-        id:
-          type: string
-          format: uuid
-          description: The ID of the book
-        authorId:
-          type: string
-          format: uuid
-          description: The ID of the author
         author:
           type: string
           description: The name of the author
@@ -503,6 +503,14 @@ components:
           type: integer
           format: int32
           description: The number of pages in the book
+        websiteVisits:
+          type: integer
+          format: int32
+          description: The number of website visits for the book
+        availableCopies:
+          type: integer
+          format: int32
+          description: Available copies of the book
     BookPurchaseRequest:
       type: object
       properties:
@@ -510,10 +518,6 @@ components:
           type: string
           format: uuid
           description: The ID of the book
-        authorId:
-          type: string
-          format: uuid
-          description: The ID of the author
         author:
           type: string
           description: The name of the author
@@ -554,25 +558,25 @@ components:
     BookOrderRequest:
       type: object
       properties:
-        id:
+        bookId:
           type: string
           format: uuid
           description: The ID of the book
         title:
           type: string
           description: The title of the book
-        pageVisits:
+        websiteVisits:
           type: integer
           format: int32
           description: The number of website visits for the book
-    BookOrderDatabaseDto:
+    BookOrder:
       type: object
       properties:
         id:
           type: string
           format: uuid
           description: The ID of the book
-        amountToOrder:
+        orderAmount:
           type: integer
           format: int32
           description: The amount of books to order
@@ -586,10 +590,10 @@ components:
         name:
           type: string
           description: The name of the author
-        authoredBooks:
+        books:
           type: array
           items:
-            $ref: '#/components/schemas/BookResponse'
+            $ref: '#/components/schemas/Book'
     AuthorCreateRequest:
       type: object
       properties:
@@ -606,7 +610,7 @@ components:
         name:
           type: string
           description: The name of the author
-    InvalidRequestError:
+    InvalidRequestException:
       type: object
       description: Error indicating an invalid request
       required:
@@ -619,7 +623,7 @@ components:
         details:
           type: string
           description: The error details
-    ResourceNotFoundError:
+    ResourceNotFoundException:
       type: object
       description: Error indicating a resource was not found
       required:
@@ -632,7 +636,10 @@ components:
         details:
           type: string
           description: The error details
-    ResourceForbiddenError:
+        resourceType:
+          type: string
+          description: The resource type not found
+    ResourceForbiddenException:
       type: object
       description: Error indicating a resource was forbidden
       required:
@@ -645,3 +652,6 @@ components:
         details:
           type: string
           description: The error details
+        resourceType:
+          type: string
+          description: The resource type that is forbidden

@@ -3,12 +3,10 @@ package com.pjatk.bookstore.bookshop.dto;
 import lombok.Data;
 
 import java.math.BigDecimal;
-// import java.util.UUID;
 
 @Data
 public class BookResponse {
 
-    // private UUID id;
     private String author;
     private String title;
     private String genre;

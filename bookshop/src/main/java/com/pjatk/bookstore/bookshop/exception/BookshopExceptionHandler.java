@@ -14,14 +14,14 @@ public class BookshopExceptionHandler extends ResponseStatusExceptionHandler {
     private final Logger logger = LogManager.getLogger(BookshopExceptionHandler.class);
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Invalid request")
-    @ExceptionHandler(InvalidRequestError.class)
+    @ExceptionHandler(InvalidRequestException.class)
     public void handleInvalidRequestError(HttpServletRequest req, Exception ex) {
         logger.warn("Invalid request at {}", req.getRequestURI() + ": " + ex.getMessage());
     }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Resource not found")
-    @ExceptionHandler(ResourceNotFoundError.class)
-    public void handleResourceNotFoundError(HttpServletRequest req, ResourceNotFoundError ex) {
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public void handleResourceNotFoundError(HttpServletRequest req, ResourceNotFoundException ex) {
         String resourceType = "Resource";
         if (ex.getResourceType() != null) {
             resourceType = ex.getResourceType();
@@ -30,8 +30,8 @@ public class BookshopExceptionHandler extends ResponseStatusExceptionHandler {
     }
 
     @ResponseStatus(value = HttpStatus.FORBIDDEN, reason = "Resource forbidden")
-    @ExceptionHandler(ResourceForbiddenError.class)
-    public void handleResourceForbiddenError(HttpServletRequest req, ResourceForbiddenError ex) {
+    @ExceptionHandler(ResourceForbiddenException.class)
+    public void handleResourceForbiddenError(HttpServletRequest req, ResourceForbiddenException ex) {
         String resourceType = "Resource";
         if (ex.getResourceType() != null) {
             resourceType = ex.getResourceType();
