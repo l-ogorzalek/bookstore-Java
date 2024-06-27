@@ -1,2 +1,2 @@
-# bookstore-Java2
+# bookstore-Java
 Final Spring project for university coursework
